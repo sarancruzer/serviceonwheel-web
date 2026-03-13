@@ -10,6 +10,14 @@
 
 :root {
   color-scheme: light;
+  --sow-font-family-base: "Archivo", sans-serif;
+  --sow-font-size-base: 16px;
+  --sow-line-height-base: 1.5;
+  --sow-font-weight-medium: 500;
+  --sow-font-weight-semibold: 600;
+  --sow-font-weight-bold: 700;
+  --sow-header-font-size: 16px;
+  --sow-header-line-height: 1.25;
 }
 
 html,
@@ -21,6 +29,19 @@ body {
   margin: 0;
   background: #f5f7fb;
   color: #111827;
+  font-family: var(--sow-font-family-base);
+  font-size: var(--sow-font-size-base);
+  line-height: var(--sow-line-height-base);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--sow-font-family-base);
+  font-weight: var(--sow-font-weight-bold);
 }
 
 a {
@@ -77,6 +98,23 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.sow-header,
+.sow-header .main-nav > li > a,
+.sow-header .header-navbar-rht .nav-link,
+.sow-header .nav-auth-trigger,
+.sow-categories-trigger {
+  font-family: var(--sow-font-family-base);
+  font-size: var(--sow-header-font-size);
+  line-height: var(--sow-header-line-height);
+  letter-spacing: 0;
+}
+
+.sow-header .main-nav > li > a,
+.sow-header .header-navbar-rht .nav-link,
+.sow-categories-trigger {
+  font-weight: var(--sow-font-weight-semibold);
 }
 
 .sow-header-home {
@@ -320,6 +358,326 @@ img {
   width: 100%;
 }
 
+.sow-section-eyebrow {
+  color: #ff008a;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sow-service-directory,
+.sow-service-detail-hero,
+.sow-service-info-section,
+.sow-service-sidebar-card,
+.sow-related-service-categories {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.06);
+}
+
+.sow-service-directory,
+.sow-service-detail-hero,
+.sow-related-service-categories {
+  padding: 28px;
+}
+
+.sow-service-info-section,
+.sow-service-sidebar-card {
+  padding: 24px;
+}
+
+.sow-service-directory-copy {
+  max-width: 720px;
+}
+
+.sow-service-category-card {
+  height: 100%;
+  min-height: 232px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 18px;
+  text-align: center;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sow-service-category-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 0, 138, 0.25);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+.sow-service-category-card h5 {
+  font-size: 18px;
+  margin-bottom: 0;
+}
+
+.sow-service-category-card p {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.sow-service-category-card__icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sow-service-category-card__icon img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.sow-service-category-card__meta {
+  color: #111827;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sow-service-task-directory {
+  margin-top: 28px;
+}
+
+.sow-service-task-directory__row {
+  padding: 20px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sow-service-task-directory__row h6 {
+  margin-bottom: 12px;
+}
+
+.sow-service-task-directory__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.sow-service-task-directory__links a {
+  color: #6b7280;
+  font-size: 14px;
+  position: relative;
+}
+
+.sow-service-task-directory__links a:hover {
+  color: #ff008a;
+}
+
+.sow-service-detail-hero {
+  margin-bottom: 28px;
+}
+
+.sow-service-detail-hero__media {
+  min-height: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.sow-service-detail-hero__media img {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  object-fit: cover;
+}
+
+.sow-service-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sow-service-chip-list span {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 14px;
+}
+
+.sow-service-stat-card {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  height: 100%;
+  padding: 18px;
+}
+
+.sow-service-stat-card h5 {
+  margin-bottom: 6px;
+}
+
+.sow-service-stat-card p {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.sow-service-category-strip {
+  margin-bottom: 28px;
+}
+
+.sow-service-category-strip__scroller {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.sow-service-category-strip__scroller a {
+  min-width: 148px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  color: #111827;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  white-space: nowrap;
+}
+
+.sow-service-category-strip__scroller a.is-active {
+  border-color: #ff008a;
+  box-shadow: inset 0 0 0 1px rgba(255, 0, 138, 0.15);
+  color: #ff008a;
+}
+
+.sow-service-category-strip__scroller img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.sow-service-offer-section + .sow-service-offer-section,
+.sow-service-offer-section + .sow-service-info-section,
+.sow-service-info-section + .sow-service-info-section {
+  margin-top: 28px;
+}
+
+.sow-service-offer-section__count {
+  background: #f8fafc;
+  border-radius: 999px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 12px;
+}
+
+.sow-service-offer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sow-service-offer-card {
+  display: flex;
+  gap: 18px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 18px;
+}
+
+.sow-service-offer-card__image {
+  width: 220px;
+  flex: 0 0 220px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.sow-service-offer-card__image img {
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  object-fit: cover;
+}
+
+.sow-service-offer-card__content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.sow-service-turnaround {
+  color: #16a34a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sow-service-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sow-service-sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+.sow-service-sidebar-list li {
+  color: #475569;
+}
+
+.sow-service-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sow-service-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 16px 18px;
+}
+
+.sow-service-faq-item summary {
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+
+.sow-service-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.sow-service-faq-item p {
+  color: #6b7280;
+  margin: 12px 0 0;
+}
+
+.sow-service-review-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  height: 100%;
+  padding: 20px;
+}
+
+.sow-related-service-categories {
+  margin-top: 28px;
+}
+
 .sow-services-page .tags {
   width: 44px;
   height: 44px;
@@ -357,6 +715,36 @@ img {
 
 .sow-select__indicator-separator {
   display: none !important;
+}
+
+.sow-blog-page .blog-list,
+.sow-blog-page .grid-blog,
+.sow-blog-page .blog-details {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.sow-blog-page .blog-image img {
+  display: block;
+  width: 100%;
+}
+
+.sow-blog-page .blog-details {
+  background: #ffffff;
+  border: 1px solid #ebeced;
+  padding: 24px;
+}
+
+.sow-blog-page .blog-details .blog-head h3 {
+  line-height: 1.25;
+}
+
+.sow-blog-page .blog-details .blog-content {
+  color: #656b76;
+}
+
+.sow-blog-page .blog-sidebar .card {
+  border-radius: 18px;
 }
 
 .PhoneInput {
@@ -786,7 +1174,21 @@ img {
     min-width: 180px;
   }
 
-  .sow-services-page .service-list {
+  .sow-services-page .service-list,
+  .sow-service-offer-card {
     flex-direction: column;
+  }
+
+  .sow-service-offer-card__image {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .sow-service-directory,
+  .sow-service-detail-hero,
+  .sow-service-info-section,
+  .sow-service-sidebar-card,
+  .sow-related-service-categories {
+    padding: 20px;
   }
 }

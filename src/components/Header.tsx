@@ -110,15 +110,7 @@ export default function Header({
               </div>
               {isHomeHeader ? (
                 <div className="sow-home-menu-layout">
-                  <Link
-                    href="/services"
-                    className="sow-categories-trigger d-none d-lg-inline-flex"
-                  >
-                    <i className="ti ti-layout-grid me-2" aria-hidden="true" />
-                    <span>Categories</span>
-                    <i className="ti ti-chevron-down ms-2" aria-hidden="true" />
-                  </Link>
-
+                  
                   <ul className="main-nav align-items-lg-center sow-home-main-nav">
                     <li className="d-lg-none">
                       <Link href="/services">Categories</Link>

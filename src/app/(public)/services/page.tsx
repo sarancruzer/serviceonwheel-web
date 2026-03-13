@@ -1,53 +1,16 @@
-"use client";
-
-import { useState } from "react";
-
 import Link from "next/link";
-import { motion } from "framer-motion";
 
-import ServiceSortSelect, {
-  type ServiceSortValue,
-} from "@/components/ServiceSortSelect";
-import { servicesSections } from "@/data/home";
+import type { Metadata } from "next";
 
-const fadeUp = {
-  initial: { opacity: 0, y: 24 },
-  transition: { duration: 0.45, ease: "easeOut" },
-  viewport: { once: true, amount: 0.2 },
-  whileInView: { opacity: 1, y: 0 },
-} as const;
+import { featuredServiceCategories, serviceCategories } from "@/data/services";
 
-function formatPrice(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    currency: "USD",
-    minimumFractionDigits: 2,
-    style: "currency",
-  }).format(value);
-}
+export const metadata: Metadata = {
+  title: "Services | Truelysell",
+  description:
+    "Browse service categories and move from a high-level directory into category-specific offerings.",
+};
 
 export default function ServicesPage() {
-  const [sortValue, setSortValue] = useState<ServiceSortValue>("featured");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
-  const serviceCount = servicesSections.reduce(
-    (count, section) => count + section.services.length,
-    0,
-  );
-
-  const orderedSections = servicesSections.map((section) => {
-    const services = [...section.services];
-
-    if (sortValue === "price-asc") {
-      services.sort((left, right) => left.price - right.price);
-    } else if (sortValue === "price-desc") {
-      services.sort((left, right) => right.price - left.price);
-    }
-
-    return {
-      ...section,
-      services,
-    };
-  });
-
   return (
     <div className="sow-services-page">
       <div className="breadcrumb-bar text-center">
@@ -87,213 +50,59 @@ export default function ServicesPage() {
       <div className="page-wrapper">
         <div className="content">
           <div className="container">
-            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-              <div>
-                <h4 className="mb-1">
-                  Found{" "}
-                  <span className="text-primary">{serviceCount} Services</span>
-                </h4>
-                <p className="text-muted mb-0">
-                  Template-style service listing without filters. Each category
-                  shows service name, price, and provider details.
+            <section className="sow-service-directory">
+              <div className="text-center mb-4">
+                <p className="sow-section-eyebrow mb-2">Category Directory</p>
+                <h3 className="mb-2">Choose a service category first</h3>
+                <p className="text-muted mb-0 mx-auto sow-service-directory-copy">
+                  Start with a category like electrician, plumbing, cleaning, or
+                  appliance repair. Once you open a category, you will see the
+                  service offerings available inside it.
                 </p>
               </div>
-              <div className="d-flex align-items-center flex-wrap gap-2">
-                <span className="text-dark me-2">Sort</span>
-                <ServiceSortSelect value={sortValue} onChange={setSortValue} />
-                <button
-                  type="button"
-                  className={`tags d-flex justify-content-center align-items-center rounded ${viewMode === "grid" ? "active bg-primary" : ""}`}
-                  onClick={() => setViewMode("grid")}
-                  aria-label="Grid view"
-                >
-                  <i className="ti ti-layout-grid" />
-                </button>
-                <button
-                  type="button"
-                  className={`tags d-flex justify-content-center align-items-center rounded ${viewMode === "list" ? "active bg-primary" : ""}`}
-                  onClick={() => setViewMode("list")}
-                  aria-label="List view"
-                >
-                  <i className="ti ti-list" />
-                </button>
-              </div>
-            </div>
 
-            {viewMode === "list" ? (
-              <div className="row">
-                <div className="col-lg-12">
-                  {orderedSections.map((section) => (
-                    <div key={section.id} className="service-category-block">
-                      <div className="mb-3">
-                        <h5 className="mb-1">{section.title}</h5>
-                        <p className="text-muted mb-0">{section.description}</p>
+              <div className="row g-4">
+                {featuredServiceCategories.map((category) => (
+                  <div key={category.id} className="col-xl-3 col-lg-4 col-md-6">
+                    <Link
+                      href={`/services/${category.slug}`}
+                      className="sow-service-category-card"
+                    >
+                      <span className="sow-service-category-card__icon">
+                        <img src={category.icon} alt={category.title} />
+                      </span>
+                      <h5>{category.title}</h5>
+                      <p>{category.summary}</p>
+                      <span className="sow-service-category-card__meta">
+                        {category.serviceCount}+ services
+                      </span>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="sow-service-task-directory">
+              <div className="row g-4">
+                {serviceCategories.slice(0, 8).map((category) => (
+                  <div key={category.id} className="col-lg-6">
+                    <div className="sow-service-task-directory__row">
+                      <h6>{category.title}</h6>
+                      <div className="sow-service-task-directory__links">
+                        {category.commonServices.map((serviceName) => (
+                          <Link
+                            key={`${category.slug}-${serviceName}`}
+                            href={`/services/${category.slug}`}
+                          >
+                            {serviceName}
+                          </Link>
+                        ))}
                       </div>
-                      {section.services.map((service) => (
-                        <motion.div
-                          {...fadeUp}
-                          key={service.id}
-                          className="service-list fadeInUp"
-                        >
-                          <div className="service-cont">
-                            <div className="service-cont-img">
-                              <Link href="/services?auth=login">
-                                <img
-                                  className="img-fluid serv-img"
-                                  alt={service.title}
-                                  src={service.image}
-                                />
-                              </Link>
-                              <div className="fav-item">
-                                <span className="fav-icon">
-                                  <i className="ti ti-heart" />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="service-cont-info">
-                              <span className="badge bg-light fs-14 mb-2">
-                                {service.category}
-                              </span>
-                              <h3 className="title">
-                                <Link href="/services?auth=login">
-                                  {service.title}
-                                </Link>
-                              </h3>
-                              <p className="service-description">
-                                {service.description}
-                              </p>
-                              <p>
-                                <i className="ti ti-map-pin" />
-                                {service.location}
-                              </p>
-                              <div className="service-pro-img">
-                                <img
-                                  src={service.providerAvatar}
-                                  alt={service.providerName}
-                                />
-                                <span>
-                                  <i className="fas fa-star filled" />
-                                  {service.rating.toFixed(1)}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="service-action">
-                            <h6>
-                              {formatPrice(service.price)}
-                              {service.oldPrice ? (
-                                <span className="old-price">
-                                  {formatPrice(service.oldPrice)}
-                                </span>
-                              ) : null}
-                            </h6>
-                            <Link
-                              href="/services?auth=login"
-                              className="btn btn-light"
-                            >
-                              Book Now
-                            </Link>
-                          </div>
-                        </motion.div>
-                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ) : (
-              orderedSections.map((section) => (
-                <div key={section.id} className="service-category-block">
-                  <div className="mb-3">
-                    <h5 className="mb-1">{section.title}</h5>
-                    <p className="text-muted mb-0">{section.description}</p>
-                  </div>
-                  <div className="row g-4">
-                    {section.services.map((service) => (
-                      <div key={service.id} className="col-lg-4 col-md-6">
-                        <motion.div
-                          {...fadeUp}
-                          className="service-item service-grid-card fadeInUp"
-                        >
-                          <div className="service-img">
-                            <Link href="/services?auth=login">
-                              <img
-                                src={service.image}
-                                className="img-fluid"
-                                alt={service.title}
-                              />
-                            </Link>
-                            <div className="fav-item d-flex align-items-center justify-content-between w-100">
-                              <span className="avatar avatar-md">
-                                <img
-                                  src={service.providerAvatar}
-                                  className="rounded-circle"
-                                  alt={service.providerName}
-                                />
-                              </span>
-                              <span className="fav-icon">
-                                <i className="ti ti-heart" />
-                              </span>
-                            </div>
-                          </div>
-                          <div className="service-content">
-                            <span className="badge bg-light fs-14 mb-2">
-                              {service.category}
-                            </span>
-                            <h6 className="mb-1 text-truncate">
-                              <Link href="/services?auth=login">
-                                {service.title}
-                              </Link>
-                            </h6>
-                            <p className="service-description">
-                              {service.description}
-                            </p>
-                            <div className="d-flex align-items-center justify-content-between">
-                              <p className="fs-14 mb-0">
-                                <i className="ti ti-star-filled text-warning me-1" />
-                                {service.rating.toFixed(1)}
-                              </p>
-                              <small>{formatPrice(service.price)}</small>
-                            </div>
-                          </div>
-                        </motion.div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))
-            )}
-
-            <nav aria-label="Page navigation">
-              <ul className="paginations d-flex justify-content-center align-items-center">
-                <li className="page-item me-3">
-                  <span className="page-link">
-                    <i className="ti ti-arrow-left me-2" />
-                    Prev
-                  </span>
-                </li>
-                <li className="page-item me-2">
-                  <span className="page-link-1 active d-flex justify-content-center align-items-center">
-                    1
-                  </span>
-                </li>
-                <li className="page-item me-2">
-                  <span className="page-link-1 d-flex justify-content-center align-items-center">
-                    2
-                  </span>
-                </li>
-                <li className="page-item me-3">
-                  <span className="page-link-1 d-flex justify-content-center align-items-center">
-                    3
-                  </span>
-                </li>
-                <li className="page-item">
-                  <span className="page-link">
-                    Next
-                    <i className="ti ti-arrow-right ms-2" />
-                  </span>
-                </li>
-              </ul>
-            </nav>
+            </section>
           </div>
         </div>
       </div>

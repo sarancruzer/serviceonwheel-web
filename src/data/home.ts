@@ -15,6 +15,7 @@ export const navigationItems: NavItem[] = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
+  { href: "/blogs", label: "Blogs" },
 ];
 
 export const footerSections: FooterSection[] = [
@@ -25,6 +26,7 @@ export const footerSections: FooterSection[] = [
       { href: "/services", label: "Services" },
       { href: "/about", label: "About" },
       { href: "/contact", label: "Contact" },
+      { href: "/blogs", label: "Blogs" },
       { href: "/login", label: "Login" },
     ],
   },
@@ -35,6 +37,7 @@ export const footerSections: FooterSection[] = [
       { href: "/about", label: "How It Works" },
       { href: "/contact", label: "Help Center" },
       { href: "/contact", label: "Report a Bug" },
+      { href: "/blogs", label: "Blog Updates" },
       { href: "/login", label: "Account Access" },
     ],
   },
@@ -44,13 +47,19 @@ export const footerSections: FooterSection[] = [
       { href: "/about", label: "About Us" },
       { href: "/services", label: "Featured Services" },
       { href: "/contact", label: "Talk to Us" },
+      { href: "/blogs", label: "Blog" },
       { href: "/about", label: "Why Truelysell" },
       { href: "/login", label: "Member Login" },
     ],
   },
 ];
 
-export const heroTypedWords = ["Carpenters", "Electricians", "Cleaners", "Designers"];
+export const heroTypedWords = [
+  "Carpenters",
+  "Electricians",
+  "Cleaners",
+  "Designers",
+];
 
 export const homeCategories: CategoryItem[] = [
   {
@@ -94,7 +103,8 @@ export const homeCategories: CategoryItem[] = [
 export const featuredServices: ServiceItem[] = [
   {
     category: "Deliveries",
-    description: "Scheduled and on-demand package handling for local deliveries.",
+    description:
+      "Scheduled and on-demand package handling for local deliveries.",
     id: "professional-delivery-services",
     image: "/assets/img/services/service-01.jpg",
     location: "Maryland City, MD, USA",
@@ -166,7 +176,8 @@ export const popularServiceTabs: ServiceTab[] = [
     services: [
       {
         category: "Computer Service",
-        description: "System backup, device recovery, and emergency restore support.",
+        description:
+          "System backup, device recovery, and emergency restore support.",
         id: "backup-recovery",
         image: "/assets/img/services/service-19.jpg",
         location: "California, USA",
@@ -179,7 +190,8 @@ export const popularServiceTabs: ServiceTab[] = [
       },
       {
         category: "Computer Service",
-        description: "Hardware upgrades and performance tuning for workstations.",
+        description:
+          "Hardware upgrades and performance tuning for workstations.",
         id: "repairs-upgrades",
         image: "/assets/img/services/service-20.jpg",
         location: "Nevada, USA",
@@ -192,7 +204,8 @@ export const popularServiceTabs: ServiceTab[] = [
       },
       {
         category: "Computer Service",
-        description: "Secure initial setup and network configuration for new systems.",
+        description:
+          "Secure initial setup and network configuration for new systems.",
         id: "setup-configuration",
         image: "/assets/img/services/service-21.jpg",
         location: "Texas, USA",
@@ -293,7 +306,8 @@ export const servicesSections: ServiceSection[] = [
     services: [
       {
         category: "Construction",
-        description: "Glass fitting service for residential and commercial spaces.",
+        description:
+          "Glass fitting service for residential and commercial spaces.",
         id: "toughened-glass-fitting-services",
         image: "/assets/img/services/service-02.jpg",
         location: "New Jersey, USA",
@@ -326,7 +340,8 @@ export const servicesSections: ServiceSection[] = [
     services: [
       {
         category: "Computer",
-        description: "Annual maintenance contract support for systems and servers.",
+        description:
+          "Annual maintenance contract support for systems and servers.",
         id: "computer-server-amc-service",
         image: "/assets/img/services/service-06.jpg",
         location: "California, USA",
@@ -339,7 +354,8 @@ export const servicesSections: ServiceSection[] = [
       },
       {
         category: "Computer",
-        description: "Secure setup, deployment, and office workstation rollout.",
+        description:
+          "Secure setup, deployment, and office workstation rollout.",
         id: "office-system-setup",
         image: "/assets/img/services/service-21.jpg",
         location: "Austin, USA",
@@ -359,7 +375,8 @@ export const servicesSections: ServiceSection[] = [
     services: [
       {
         category: "Interior",
-        description: "Design planning and visual improvements for home interiors.",
+        description:
+          "Design planning and visual improvements for home interiors.",
         id: "interior-designing",
         image: "/assets/img/services/service-07.jpg",
         location: "Maryland, USA",
@@ -372,7 +389,8 @@ export const servicesSections: ServiceSection[] = [
       },
       {
         category: "Cleaning",
-        description: "Routine cleaning and sanitization for apartments and homes.",
+        description:
+          "Routine cleaning and sanitization for apartments and homes.",
         id: "house-cleaning-services",
         image: "/assets/img/services/service-09.jpg",
         location: "Georgia, USA",

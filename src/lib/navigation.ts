@@ -13,15 +13,16 @@ export const publicInnerNavigation: NavigationItem[] = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
+  { href: "/blogs", label: "Blogs" },
+  { href: "/login", label: "Admin" },
 ];
 
 export const publicHomeNavigation: NavigationItem[] = [
   { exact: true, href: "/", label: "Home", showCaret: true },
   { href: "/services", label: "Services", showCaret: true },
-  { href: "/about", label: "Customers", showCaret: true },
-  { href: "/services", label: "Providers", showCaret: true },
-  { href: "/contact", label: "Pages", showCaret: true },
-  { href: "/about", label: "Become a Provider" },
+  { href: "/about", label: "About", showCaret: true },
+  { href: "/contact", label: "Contact", showCaret: true },
+  { href: "/blogs", label: "Blogs", showCaret: true },
   { href: "/login", label: "Admin" },
 ];
 
