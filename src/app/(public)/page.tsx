@@ -42,7 +42,7 @@ export default function HomePage() {
   return (
     <>
       <section className="hero-section sow-hero-section" id="home">
-        <div className="hero-content position-relative overflow-hidden">
+        <div className="hero-content position-relative">
           <div className="container">
             <div className="row align-items-center">
               <div className="col-lg-6">
