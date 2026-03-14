@@ -980,6 +980,54 @@ img {
   min-width: 0;
 }
 
+.sow-service-offer-card__summary {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.sow-service-offer-card__summary h5 {
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.sow-service-offer-card__price {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sow-service-offer-card__price strong {
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.sow-service-offer-card__price small {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sow-service-offer-card--compact {
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+}
+
+.sow-service-offer-card--compact .sow-service-offer-card__image {
+  width: 92px;
+  flex: 0 0 92px;
+  border-radius: 16px;
+}
+
+.sow-service-offer-card--compact .sow-service-offer-card__image img {
+  height: 92px;
+  min-height: 92px;
+}
+
 .sow-service-turnaround {
   color: #16a34a;
   font-size: 13px;
@@ -1578,9 +1626,27 @@ img {
     flex-direction: column;
   }
 
+  .sow-service-offer-card--compact {
+    flex-direction: row;
+  }
+
+  .sow-service-offer-card__summary h5 {
+    font-size: 16px;
+  }
+
   .sow-service-offer-card__image {
     width: 100%;
     flex-basis: auto;
+  }
+
+  .sow-service-offer-card--compact .sow-service-offer-card__image {
+    width: 80px;
+    flex: 0 0 80px;
+  }
+
+  .sow-service-offer-card--compact .sow-service-offer-card__image img {
+    height: 80px;
+    min-height: 80px;
   }
 
   .sow-service-directory,

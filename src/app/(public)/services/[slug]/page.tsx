@@ -300,7 +300,7 @@ export default async function ServiceCategoryDetailPage({
                     {displayTitle} Services
                   </p>
                   <h3 className="mb-3">
-                    Book verified {displayTitle.toLowerCase()} experts
+                    Choose the right {displayTitle.toLowerCase()} service
                   </h3>
                   <p className="text-muted mb-4">{displayDescription}</p>
 
@@ -368,10 +368,6 @@ export default async function ServiceCategoryDetailPage({
                         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                           <div>
                             <h4 className="mb-1">{section.name}</h4>
-                            <p className="text-muted mb-0">
-                              {section.description ??
-                                `Explore the currently available ${displayTitle.toLowerCase()} services in this subcategory.`}
-                            </p>
                           </div>
                           <span className="sow-service-offer-section__count">
                             {section.services.length} services
@@ -386,7 +382,7 @@ export default async function ServiceCategoryDetailPage({
                             return (
                               <article
                                 key={service.id}
-                                className={`sow-service-offer-card${isSelected ? " is-active" : ""}`}
+                                className={`sow-service-offer-card sow-service-offer-card--compact${isSelected ? " is-active" : ""}`}
                               >
                                 <div className="sow-service-offer-card__image">
                                   <img
@@ -396,34 +392,28 @@ export default async function ServiceCategoryDetailPage({
                                 </div>
 
                                 <div className="sow-service-offer-card__content">
-                                  <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-                                    <span className="badge bg-light text-dark">
-                                      {section.name}
-                                    </span>
-                                    <span className="sow-service-turnaround">
-                                      {isSelected
-                                        ? "Selected service"
-                                        : formatCatalogPriceType(
+                                  <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                    <div className="sow-service-offer-card__summary">
+                                      <h5 className="mb-1 d-flex align-items-center gap-2">
+                                        <span>{service.name}</span>
+                                        {isSelected ? (
+                                          <i
+                                            className="ti ti-info-circle text-linear-primary"
+                                            aria-hidden="true"
+                                          />
+                                        ) : null}
+                                      </h5>
+                                      <div className="sow-service-offer-card__price">
+                                        <strong>
+                                          {formatCatalogPrice(service)}
+                                        </strong>
+                                        <small>
+                                          {formatCatalogPriceType(
                                             service.priceType,
                                           )}
-                                    </span>
-                                  </div>
-                                  <h5 className="mb-2">{service.name}</h5>
-                                  <p className="text-muted mb-3">
-                                    {service.description ??
-                                      `${service.name} is available under the ${section.name.toLowerCase()} section for ${displayTitle.toLowerCase()}.`}
-                                  </p>
-
-                                  <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                                    <div>
-                                      <p className="mb-1 fw-semibold text-dark">
-                                        {formatCatalogPrice(service)}
-                                      </p>
-                                      <small className="text-muted">
-                                        Available in {humanizeCity(city)}
-                                      </small>
+                                        </small>
+                                      </div>
                                     </div>
-
                                     <div className="text-end">
                                       <Link
                                         href={buildServicesHref({
@@ -434,7 +424,7 @@ export default async function ServiceCategoryDetailPage({
                                         })}
                                         className="btn btn-dark btn-sm"
                                       >
-                                        Book Now
+                                        Add to Cart
                                       </Link>
                                     </div>
                                   </div>
@@ -453,11 +443,6 @@ export default async function ServiceCategoryDetailPage({
                         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                           <div>
                             <h4 className="mb-1">{groupName}</h4>
-                            <p className="text-muted mb-0">
-                              Explore the most relevant{" "}
-                              {displayTitle.toLowerCase()} services inside this
-                              category.
-                            </p>
                           </div>
                           <span className="sow-service-offer-section__count">
                             {offerings.length} services
@@ -468,48 +453,24 @@ export default async function ServiceCategoryDetailPage({
                           {offerings.map((offering) => (
                             <article
                               key={offering.id}
-                              className="sow-service-offer-card"
+                              className="sow-service-offer-card sow-service-offer-card--compact"
                             >
                               <div className="sow-service-offer-card__image">
                                 <img src={offering.image} alt={offering.title} />
                               </div>
 
                               <div className="sow-service-offer-card__content">
-                                <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-                                  <span className="badge bg-light text-dark">
-                                    {groupName}
-                                  </span>
-                                  <span className="sow-service-turnaround">
-                                    {offering.turnaround}
-                                  </span>
-                                </div>
-                                <h5 className="mb-2">{offering.title}</h5>
-                                <p className="text-muted mb-3">
-                                  {offering.description}
-                                </p>
-
                                 <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                                  <div className="d-flex align-items-center">
-                                    <img
-                                      src={offering.providerAvatar}
-                                      alt={offering.providerName}
-                                      className="avatar avatar-sm rounded-circle me-2"
-                                    />
-                                    <div>
-                                      <p className="mb-0 fw-medium text-dark">
-                                        {offering.providerName}
-                                      </p>
-                                      <small className="text-muted">
-                                        <i className="ti ti-star-filled text-warning me-1" />
-                                        {offering.rating.toFixed(1)} rating
-                                      </small>
+                                  <div className="sow-service-offer-card__summary">
+                                    <h5 className="mb-1">{offering.title}</h5>
+                                    <div className="sow-service-offer-card__price">
+                                      <strong>
+                                        ${offering.price.toFixed(2)}
+                                      </strong>
+                                      <small>{offering.turnaround}</small>
                                     </div>
                                   </div>
-
                                   <div className="text-end">
-                                    <h6 className="mb-2">
-                                      ${offering.price.toFixed(2)}
-                                    </h6>
                                     <Link
                                       href={buildServicesHref({
                                         auth: "login",
@@ -518,7 +479,7 @@ export default async function ServiceCategoryDetailPage({
                                       })}
                                       className="btn btn-dark btn-sm"
                                     >
-                                      Book Now
+                                      Add to Cart
                                     </Link>
                                   </div>
                                 </div>
@@ -588,13 +549,11 @@ export default async function ServiceCategoryDetailPage({
               <div className="col-lg-4">
                 <aside className="sow-service-sidebar">
                   <div className="sow-service-sidebar-card">
-                    <h5 className="mb-3">
-                      Need help choosing the right service?
-                    </h5>
+                    <h5 className="mb-3">Ready to place your order?</h5>
                     <p className="text-muted mb-3">
-                      Start with the most relevant tasks or sign in to continue
-                      with a booking request for{" "}
-                      {displayTitle.toLowerCase()} support.
+                      Pick the services you need, add them to cart, and
+                      continue when you are ready to confirm your{" "}
+                      {displayTitle.toLowerCase()} request.
                     </p>
                     <Link
                       href={buildServicesHref({
@@ -604,7 +563,7 @@ export default async function ServiceCategoryDetailPage({
                       })}
                       className="btn btn-linear-primary w-100"
                     >
-                      Continue to Booking
+                      Continue
                     </Link>
                   </div>
 
