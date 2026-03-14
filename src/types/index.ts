@@ -160,6 +160,29 @@ export interface PublicCategory {
   slug: string;
 }
 
+export interface PublicCatalogSubCategory {
+  categoryId: string;
+  description: string | null;
+  id: string;
+  isActive: boolean;
+  name: string;
+  slug: string;
+  sortOrder: number;
+}
+
+export interface PublicCatalogService {
+  description: string | null;
+  id: string;
+  isActive: boolean;
+  name: string;
+  priceText: string | null;
+  priceType: string | null;
+  priceValue: string | null;
+  slug: string;
+  sortOrder: number;
+  subCategoryId: string;
+}
+
 export interface PublicSubService {
   categoryId: string;
   id: string;

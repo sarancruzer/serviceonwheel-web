@@ -956,6 +956,11 @@ img {
   padding: 18px;
 }
 
+.sow-service-offer-card.is-active {
+  border-color: rgba(255, 0, 138, 0.3);
+  box-shadow: 0 20px 45px rgba(255, 0, 138, 0.08);
+}
+
 .sow-service-offer-card__image {
   width: 220px;
   flex: 0 0 220px;

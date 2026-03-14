@@ -204,7 +204,7 @@ export default function HeroServiceSearch({
     const abortController = new AbortController();
     const searchParams = new URLSearchParams({
       limit: "6",
-      type: "subservice",
+      type: "category",
     });
 
     if (selectedCity?.value) {
@@ -216,7 +216,7 @@ export default function HeroServiceSearch({
     })
       .then(async (response) => {
         if (!response.ok) {
-          throw new Error("Failed to fetch default service suggestions.");
+          throw new Error("Failed to fetch default category suggestions.");
         }
 
         return (await response.json()) as PublicServiceSearchResponse;
@@ -363,7 +363,7 @@ export default function HeroServiceSearch({
                 <div className="sow-hero-search__results-head">
                   <span>
                     {isShowingDefaultSuggestions
-                      ? "Select a service"
+                      ? "Select a category"
                       : "Live service suggestions"}
                   </span>
                   <small>

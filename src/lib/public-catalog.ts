@@ -7,6 +7,8 @@ import {
 import { buildServicesHref } from "@/lib/services-href";
 import type {
   PublicCategory,
+  PublicCatalogService,
+  PublicCatalogSubCategory,
   PublicCity,
   PublicCityListResponse,
   PublicServiceSearchResponse,
@@ -41,6 +43,15 @@ type CatalogIndex = {
     }
   >;
   citySlug: string;
+};
+
+export type ImportedCatalogCategoryDetail = {
+  category: PublicCategory;
+  subCategories: Array<
+    PublicCatalogSubCategory & {
+      services: PublicCatalogService[];
+    }
+  >;
 };
 
 function buildApiUrl(pathname: string) {
@@ -91,6 +102,10 @@ export async function listPublicCategories(citySlug: string) {
   );
 }
 
+export async function listImportedCatalogCategories() {
+  return fetchCatalogJson<PublicCategory[]>("/public/catalog/categories");
+}
+
 function buildCityListResponse(items: PublicCity[]): PublicCityListResponse {
   if (!items.length) {
     return {
@@ -125,6 +140,44 @@ export async function listPublicSubServices(
   return fetchCatalogJson<PublicSubService[]>(
     `/public/cities/${citySlug}/categories/${categorySlug}/subservices`,
   );
+}
+
+export async function listImportedCatalogSubCategories(categoryId: string) {
+  return fetchCatalogJson<PublicCatalogSubCategory[]>(
+    `/public/catalog/categories/${categoryId}/subcategories`,
+  );
+}
+
+export async function listImportedCatalogServices(subCategoryId: string) {
+  return fetchCatalogJson<PublicCatalogService[]>(
+    `/public/catalog/subcategories/${subCategoryId}/services`,
+  );
+}
+
+export async function getImportedCatalogCategoryDetail(
+  categorySlug: string,
+): Promise<ImportedCatalogCategoryDetail | null> {
+  const categories = await listImportedCatalogCategories();
+  const category = categories.find((item) => item.slug === categorySlug);
+
+  if (!category) {
+    return null;
+  }
+
+  const subCategories = await listImportedCatalogSubCategories(category.id);
+  const subCategoryEntries = await Promise.all(
+    subCategories.map(async (subCategory) => ({
+      ...subCategory,
+      services: await listImportedCatalogServices(subCategory.id),
+    })),
+  );
+
+  return {
+    category,
+    subCategories: subCategoryEntries.filter(
+      (subCategory) => subCategory.services.length > 0,
+    ),
+  };
 }
 
 async function getCatalogIndex(citySlug: string): Promise<CatalogIndex> {
