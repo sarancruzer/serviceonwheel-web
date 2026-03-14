@@ -8,11 +8,16 @@ import {
   getServiceCategoryBySlug,
   serviceCategories,
 } from "@/data/services";
+import { buildServicesHref } from "@/lib/services-href";
 import type { ServiceCategoryOffering } from "@/types";
 
 type ServiceCategoryDetailPageProps = {
   params: Promise<{
     slug: string;
+  }>;
+  searchParams?: Promise<{
+    auth?: string | string[];
+    city?: string | string[];
   }>;
 };
 
@@ -52,10 +57,21 @@ function groupOfferingsBySection(offerings: ServiceCategoryOffering[]) {
   return Array.from(groups.entries());
 }
 
+function getSearchParamValue(value?: string | string[]) {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+
+  return value;
+}
+
 export default async function ServiceCategoryDetailPage({
   params,
+  searchParams,
 }: ServiceCategoryDetailPageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const city = getSearchParamValue(resolvedSearchParams?.city);
   const category = getServiceCategoryBySlug(slug);
 
   if (!category) {
@@ -83,7 +99,7 @@ export default async function ServiceCategoryDetailPage({
                     </Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link href="/services">Services</Link>
+                    <Link href={buildServicesHref({ city })}>Services</Link>
                   </li>
                   <li className="breadcrumb-item active" aria-current="page">
                     {category.title}
@@ -161,7 +177,10 @@ export default async function ServiceCategoryDetailPage({
                 {serviceCategories.map((serviceCategory) => (
                   <Link
                     key={serviceCategory.id}
-                    href={`/services/${serviceCategory.slug}`}
+                    href={buildServicesHref({
+                      city,
+                      slug: serviceCategory.slug,
+                    })}
                     className={
                       serviceCategory.slug === category.slug
                         ? "is-active"
@@ -246,7 +265,11 @@ export default async function ServiceCategoryDetailPage({
                                   ${offering.price.toFixed(2)}
                                 </h6>
                                 <Link
-                                  href={`/services/${category.slug}?auth=login`}
+                                  href={buildServicesHref({
+                                    auth: "login",
+                                    city,
+                                    slug: category.slug,
+                                  })}
                                   className="btn btn-dark btn-sm"
                                 >
                                   Book Now
@@ -321,7 +344,11 @@ export default async function ServiceCategoryDetailPage({
                       support.
                     </p>
                     <Link
-                      href={`/services/${category.slug}?auth=login`}
+                      href={buildServicesHref({
+                        auth: "login",
+                        city,
+                        slug: category.slug,
+                      })}
                       className="btn btn-linear-primary w-100"
                     >
                       Continue to Booking
@@ -353,7 +380,10 @@ export default async function ServiceCategoryDetailPage({
                       together.
                     </p>
                   </div>
-                  <Link href="/services" className="link-primary">
+                  <Link
+                    href={buildServicesHref({ city })}
+                    className="link-primary"
+                  >
                     View All Categories
                   </Link>
                 </div>
@@ -362,7 +392,10 @@ export default async function ServiceCategoryDetailPage({
                   {relatedCategories.map((relatedCategory) => (
                     <div key={relatedCategory.id} className="col-md-4">
                       <Link
-                        href={`/services/${relatedCategory.slug}`}
+                        href={buildServicesHref({
+                          city,
+                          slug: relatedCategory.slug,
+                        })}
                         className="sow-service-category-card"
                       >
                         <span className="sow-service-category-card__icon">

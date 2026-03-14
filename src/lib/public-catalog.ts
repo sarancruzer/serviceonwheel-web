@@ -4,20 +4,20 @@ import {
   configuredPublicCities,
   getConfiguredDefaultCitySlug,
 } from "@/lib/public-city-config";
+import { buildServicesHref } from "@/lib/services-href";
 import type {
   PublicCategory,
   PublicCity,
   PublicCityListResponse,
   PublicServiceSearchResponse,
   PublicServiceSearchResult,
+  PublicServiceSearchType,
   PublicSubService,
 } from "@/types";
 
 const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:3001";
 const DEFAULT_CITY_SLUG =
   process.env.DEFAULT_CITY_SLUG ?? getConfiguredDefaultCitySlug();
-const ENABLE_PUBLIC_CITIES_ENDPOINT =
-  process.env.ENABLE_PUBLIC_CITIES_ENDPOINT === "true";
 const CATALOG_REVALIDATE_SECONDS = 300;
 
 type FetchCatalogJsonOptions = RequestInit & {
@@ -31,6 +31,7 @@ type SearchPublicServicesOptions = {
   city?: string | null;
   limit?: number;
   query?: string | null;
+  type?: PublicServiceSearchType | null;
 };
 
 type CatalogIndex = {
@@ -90,26 +91,30 @@ export async function listPublicCategories(citySlug: string) {
   );
 }
 
-export async function listPublicCities(): Promise<PublicCityListResponse> {
-  if (!ENABLE_PUBLIC_CITIES_ENDPOINT) {
+function buildCityListResponse(items: PublicCity[]): PublicCityListResponse {
+  if (!items.length) {
     return {
       defaultCitySlug: DEFAULT_CITY_SLUG,
       items: configuredPublicCities,
     };
   }
 
+  return {
+    defaultCitySlug:
+      items.find((city) => city.slug === DEFAULT_CITY_SLUG)?.slug ??
+      items[0]?.slug ??
+      DEFAULT_CITY_SLUG,
+    items,
+  };
+}
+
+export async function listPublicCities(): Promise<PublicCityListResponse> {
   try {
     const items = await fetchCatalogJson<PublicCity[]>("/public/cities");
 
-    return {
-      defaultCitySlug: DEFAULT_CITY_SLUG,
-      items,
-    };
+    return buildCityListResponse(items);
   } catch {
-    return {
-      defaultCitySlug: DEFAULT_CITY_SLUG,
-      items: configuredPublicCities,
-    };
+    return buildCityListResponse(configuredPublicCities);
   }
 }
 
@@ -138,19 +143,34 @@ async function getCatalogIndex(citySlug: string): Promise<CatalogIndex> {
 }
 
 function buildFallbackSearchHref(query: string, citySlug: string) {
-  const searchParams = new URLSearchParams();
+  return buildServicesHref({
+    city: citySlug,
+    query,
+  });
+}
+
+function buildPublicServiceSearchPath({
+  citySlug,
+  limit,
+  query,
+  type,
+}: {
+  citySlug: string;
+  limit: number;
+  query: string;
+  type: PublicServiceSearchType;
+}) {
+  const searchParams = new URLSearchParams({
+    citySlug,
+    limit: String(limit),
+    type,
+  });
 
   if (query) {
-    searchParams.set("query", query);
+    searchParams.set("q", query);
   }
 
-  if (citySlug) {
-    searchParams.set("city", citySlug);
-  }
-
-  const queryString = searchParams.toString();
-
-  return queryString ? `/services?${queryString}` : "/services";
+  return `/public/service-search?${searchParams.toString()}`;
 }
 
 function createCategoryResult(
@@ -161,7 +181,10 @@ function createCategoryResult(
     categoryName: category.name,
     categorySlug: category.slug,
     citySlug,
-    href: `/services/${category.slug}?city=${citySlug}`,
+    href: buildServicesHref({
+      city: citySlug,
+      slug: category.slug,
+    }),
     id: `category-${category.id}`,
     subtitle: `${category.name} category`,
     title: category.name,
@@ -178,7 +201,11 @@ function createSubServiceResult(
     categoryName: category.name,
     categorySlug: category.slug,
     citySlug,
-    href: `/services/${category.slug}?city=${citySlug}&service=${subService.slug}`,
+    href: buildServicesHref({
+      city: citySlug,
+      service: subService.slug,
+      slug: category.slug,
+    }),
     id: `subservice-${subService.id}`,
     serviceSlug: subService.slug,
     subtitle:
@@ -215,72 +242,33 @@ function getMatchScore(query: string, ...candidates: string[]) {
   }, 0);
 }
 
-export async function searchPublicServices({
+async function searchPublicServicesLocally({
   city,
-  limit = 8,
+  limit,
   query,
+  type,
 }: SearchPublicServicesOptions): Promise<PublicServiceSearchResponse> {
   const normalizedCitySlug = normalizeCitySlug(city);
   const normalizedQuery = normalizeSearchQuery(query);
-  const safeLimit = Math.min(Math.max(limit, 1), 20);
+  const safeLimit = Math.min(Math.max(limit ?? 8, 1), 20);
+  const searchType = type ?? "all";
+  const catalogIndex = await getCatalogIndex(normalizedCitySlug);
+  const categoryResults = catalogIndex.categories.map((category) =>
+    createCategoryResult(category, catalogIndex.citySlug),
+  );
+  const subServiceResults = catalogIndex.categories.flatMap((category) =>
+    category.subServices.map((subService) =>
+      createSubServiceResult(category, subService, catalogIndex.citySlug),
+    ),
+  );
 
-  try {
-    const catalogIndex = await getCatalogIndex(normalizedCitySlug);
-
-    if (!normalizedQuery) {
-      const items = catalogIndex.categories
-        .slice(0, safeLimit)
-        .map((category) =>
-          createCategoryResult(category, catalogIndex.citySlug),
-        );
-
-      return {
-        citySlug: catalogIndex.citySlug,
-        items,
-        query: normalizedQuery,
-        total: items.length,
-      };
-    }
-
-    const categoryMatches = catalogIndex.categories
-      .map((category) => ({
-        item: createCategoryResult(category, catalogIndex.citySlug),
-        score: getMatchScore(normalizedQuery, category.name, category.slug),
-      }))
-      .filter((match) => match.score > 0);
-
-    const subServiceMatches = catalogIndex.categories.flatMap((category) =>
-      category.subServices
-        .map((subService) => ({
-          item: createSubServiceResult(
-            category,
-            subService,
-            catalogIndex.citySlug,
-          ),
-          score: getMatchScore(
-            normalizedQuery,
-            subService.name,
-            subService.slug,
-            category.name,
-          ),
-        }))
-        .filter((match) => match.score > 0),
-    );
-
-    const items = [...categoryMatches, ...subServiceMatches]
-      .sort((left, right) => {
-        if (right.score !== left.score) {
-          return right.score - left.score;
-        }
-
-        if (left.item.type !== right.item.type) {
-          return left.item.type === "subservice" ? -1 : 1;
-        }
-
-        return left.item.title.localeCompare(right.item.title);
-      })
-      .slice(0, safeLimit)
-      .map((match) => match.item);
+  if (!normalizedQuery) {
+    const items =
+      searchType === "category"
+        ? categoryResults.slice(0, safeLimit)
+        : searchType === "subservice"
+          ? subServiceResults.slice(0, safeLimit)
+          : [...subServiceResults, ...categoryResults].slice(0, safeLimit);
 
     return {
       citySlug: catalogIndex.citySlug,
@@ -288,14 +276,98 @@ export async function searchPublicServices({
       query: normalizedQuery,
       total: items.length,
     };
+  }
+
+  const categoryMatches =
+    searchType === "subservice"
+      ? []
+      : categoryResults
+          .map((item) => ({
+            item,
+            score: getMatchScore(normalizedQuery, item.title, item.categorySlug),
+          }))
+          .filter((match) => match.score > 0);
+
+  const subServiceMatches =
+    searchType === "category"
+      ? []
+      : subServiceResults
+          .map((item) => ({
+            item,
+            score: getMatchScore(
+              normalizedQuery,
+              item.title,
+              item.serviceSlug ?? "",
+              item.categoryName,
+            ),
+          }))
+          .filter((match) => match.score > 0);
+
+  const items = [...categoryMatches, ...subServiceMatches]
+    .sort((left, right) => {
+      if (right.score !== left.score) {
+        return right.score - left.score;
+      }
+
+      if (left.item.type !== right.item.type) {
+        return left.item.type === "subservice" ? -1 : 1;
+      }
+
+      return left.item.title.localeCompare(right.item.title);
+    })
+    .slice(0, safeLimit)
+    .map((match) => match.item);
+
+  return {
+    citySlug: catalogIndex.citySlug,
+    items,
+    query: normalizedQuery,
+    total: items.length,
+  };
+}
+
+export async function searchPublicServices({
+  city,
+  limit = 8,
+  query,
+  type,
+}: SearchPublicServicesOptions): Promise<PublicServiceSearchResponse> {
+  const normalizedCitySlug = normalizeCitySlug(city);
+  const normalizedQuery = normalizeSearchQuery(query);
+  const safeLimit = Math.min(Math.max(limit, 1), 20);
+  const searchType = type ?? "all";
+
+  try {
+    return await fetchCatalogJson<PublicServiceSearchResponse>(
+      buildPublicServiceSearchPath({
+        citySlug: normalizedCitySlug,
+        limit: safeLimit,
+        query: normalizedQuery,
+        type: searchType,
+      }),
+      {
+        next: {
+          revalidate: 60,
+        },
+      },
+    );
   } catch {
-    return {
-      citySlug: normalizedCitySlug,
-      error: "Live service search is temporarily unavailable.",
-      items: [],
-      query: normalizedQuery,
-      total: 0,
-    };
+    try {
+      return await searchPublicServicesLocally({
+        city: normalizedCitySlug,
+        limit: safeLimit,
+        query: normalizedQuery,
+        type: searchType,
+      });
+    } catch {
+      return {
+        citySlug: normalizedCitySlug,
+        error: "Live service search is temporarily unavailable.",
+        items: [],
+        query: normalizedQuery,
+        total: 0,
+      };
+    }
   }
 }
 

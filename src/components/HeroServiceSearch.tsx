@@ -19,6 +19,7 @@ import {
   configuredPublicCities,
   getConfiguredDefaultCitySlug,
 } from "@/lib/public-city-config";
+import { buildServicesHref } from "@/lib/services-href";
 import type {
   PublicCityListResponse,
   PublicServiceSearchResponse,
@@ -32,20 +33,10 @@ type HeroServiceSearchProps = {
 const SELECTED_CITY_STORAGE_KEY = "sow:selected-city";
 
 function buildFallbackHref(query: string, citySlug: string) {
-  const searchParams = new URLSearchParams();
-  const trimmedQuery = query.trim();
-
-  if (trimmedQuery) {
-    searchParams.set("query", trimmedQuery);
-  }
-
-  if (citySlug) {
-    searchParams.set("city", citySlug);
-  }
-
-  const queryString = searchParams.toString();
-
-  return queryString ? `/services?${queryString}` : "/services";
+  return buildServicesHref({
+    city: citySlug,
+    query,
+  });
 }
 
 function toCityOption(citySlug: string, cityName: string): CitySelectOption {
@@ -83,6 +74,9 @@ export default function HeroServiceSearch({
     () => getInitialSelectedCity(getInitialCityOptions()),
   );
   const [serviceQuery, setServiceQuery] = useState("");
+  const [defaultSuggestions, setDefaultSuggestions] = useState<
+    PublicServiceSearchResult[]
+  >([]);
   const [results, setResults] = useState<PublicServiceSearchResult[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCityMenuOpen, setIsCityMenuOpen] = useState(false);
@@ -90,13 +84,16 @@ export default function HeroServiceSearch({
   const [error, setError] = useState<string | null>(null);
   const deferredQuery = useDeferredValue(serviceQuery.trim());
   const activeCitySlug = selectedCity?.value ?? getConfiguredDefaultCitySlug();
-  const defaultSuggestions: PublicServiceSearchResult[] = serviceCategories
+  const fallbackSuggestions: PublicServiceSearchResult[] = serviceCategories
     .slice(0, 10)
     .map((category) => ({
       categoryName: category.title,
       categorySlug: category.slug,
       citySlug: activeCitySlug,
-      href: `/services/${category.slug}?city=${activeCitySlug}`,
+      href: buildServicesHref({
+        city: activeCitySlug,
+        slug: category.slug,
+      }),
       id: `default-category-${category.id}`,
       subtitle: category.summary,
       title: category.title,
@@ -104,7 +101,9 @@ export default function HeroServiceSearch({
     }));
   const isShowingDefaultSuggestions = deferredQuery.length < 2;
   const displayResults = isShowingDefaultSuggestions
-    ? defaultSuggestions
+    ? defaultSuggestions.length
+      ? defaultSuggestions
+      : fallbackSuggestions
     : results;
 
   useEffect(() => {
@@ -202,6 +201,43 @@ export default function HeroServiceSearch({
   }, []);
 
   useEffect(() => {
+    const abortController = new AbortController();
+    const searchParams = new URLSearchParams({
+      limit: "6",
+      type: "subservice",
+    });
+
+    if (selectedCity?.value) {
+      searchParams.set("city", selectedCity.value);
+    }
+
+    fetch(`/api/public/service-search?${searchParams.toString()}`, {
+      signal: abortController.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch default service suggestions.");
+        }
+
+        return (await response.json()) as PublicServiceSearchResponse;
+      })
+      .then((payload) => {
+        setDefaultSuggestions(payload.items);
+      })
+      .catch((fetchError: Error) => {
+        if (fetchError.name === "AbortError") {
+          return;
+        }
+
+        setDefaultSuggestions([]);
+      });
+
+    return () => {
+      abortController.abort();
+    };
+  }, [selectedCity?.value]);
+
+  useEffect(() => {
     if (deferredQuery.length < 2) {
       setResults([]);
       setError(null);
@@ -213,6 +249,7 @@ export default function HeroServiceSearch({
     const searchParams = new URLSearchParams({
       limit: "6",
       q: deferredQuery,
+      type: "all",
     });
 
     if (selectedCity?.value) {

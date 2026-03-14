@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { featuredServiceCategories, serviceCategories } from "@/data/services";
 import { searchPublicServices } from "@/lib/public-catalog";
+import { buildServicesHref } from "@/lib/services-href";
 
 export const metadata: Metadata = {
   title: "Services | Truelysell",
@@ -146,7 +147,10 @@ export default async function ServicesPage({
                 {featuredServiceCategories.map((category) => (
                   <div key={category.id} className="col-xl-3 col-lg-4 col-md-6">
                     <Link
-                      href={`/services/${category.slug}`}
+                      href={buildServicesHref({
+                        city,
+                        slug: category.slug,
+                      })}
                       className="sow-service-category-card"
                     >
                       <span className="sow-service-category-card__icon">
@@ -173,7 +177,10 @@ export default async function ServicesPage({
                         {category.commonServices.map((serviceName) => (
                           <Link
                             key={`${category.slug}-${serviceName}`}
-                            href={`/services/${category.slug}`}
+                            href={buildServicesHref({
+                              city,
+                              slug: category.slug,
+                            })}
                           >
                             {serviceName}
                           </Link>

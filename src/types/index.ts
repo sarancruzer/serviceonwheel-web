@@ -171,6 +171,7 @@ export interface PublicSubService {
 }
 
 export type PublicServiceSearchResultType = "category" | "subservice";
+export type PublicServiceSearchType = "all" | PublicServiceSearchResultType;
 
 export interface PublicServiceSearchResult {
   categoryName: string;
