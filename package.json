@@ -10,8 +10,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "prepare": "node -e \"const fs=require('fs'); process.exit(fs.existsSync('.git')||fs.existsSync('../.git')?0:1)\" && husky || true",
     "lint-staged": "lint-staged"
   },
