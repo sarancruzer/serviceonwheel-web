@@ -139,3 +139,55 @@ export interface ServiceCategory {
   summary: string;
   title: string;
 }
+
+export interface PublicCity {
+  id: string;
+  isActive: boolean;
+  name: string;
+  slug: string;
+}
+
+export interface PublicCityListResponse {
+  defaultCitySlug: string;
+  items: PublicCity[];
+}
+
+export interface PublicCategory {
+  iconKey: string | null;
+  id: string;
+  isActive: boolean;
+  name: string;
+  slug: string;
+}
+
+export interface PublicSubService {
+  categoryId: string;
+  id: string;
+  isActive: boolean;
+  name: string;
+  seoDescription: string | null;
+  seoTitle: string | null;
+  slug: string;
+}
+
+export type PublicServiceSearchResultType = "category" | "subservice";
+
+export interface PublicServiceSearchResult {
+  categoryName: string;
+  categorySlug: string;
+  citySlug: string;
+  href: string;
+  id: string;
+  serviceSlug?: string;
+  subtitle: string;
+  title: string;
+  type: PublicServiceSearchResultType;
+}
+
+export interface PublicServiceSearchResponse {
+  citySlug: string;
+  error?: string;
+  items: PublicServiceSearchResult[];
+  query: string;
+  total: number;
+}

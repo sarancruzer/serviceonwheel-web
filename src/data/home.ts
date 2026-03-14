@@ -61,6 +61,8 @@ export const heroTypedWords = [
   "Designers",
 ];
 
+export const heroPopularSearches = ["Plumber", "Interior", "Nail Technicians"];
+
 export const homeCategories: CategoryItem[] = [
   {
     icon: "/assets/img/icons/category-01.svg",

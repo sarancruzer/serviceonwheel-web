@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { featuredServiceCategories, serviceCategories } from "@/data/services";
+import { searchPublicServices } from "@/lib/public-catalog";
 
 export const metadata: Metadata = {
   title: "Services | Truelysell",
@@ -10,7 +11,35 @@ export const metadata: Metadata = {
     "Browse service categories and move from a high-level directory into category-specific offerings.",
 };
 
-export default function ServicesPage() {
+type ServicesPageProps = {
+  searchParams?: Promise<{
+    city?: string | string[];
+    query?: string | string[];
+  }>;
+};
+
+function getSearchParamValue(value?: string | string[]) {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+
+  return value;
+}
+
+export default async function ServicesPage({
+  searchParams,
+}: ServicesPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const query = getSearchParamValue(resolvedSearchParams?.query) ?? "";
+  const city = getSearchParamValue(resolvedSearchParams?.city);
+  const liveSearchResults = query
+    ? await searchPublicServices({
+        city,
+        limit: 12,
+        query,
+      })
+    : null;
+
   return (
     <div className="sow-services-page">
       <div className="breadcrumb-bar text-center">
@@ -50,6 +79,58 @@ export default function ServicesPage() {
       <div className="page-wrapper">
         <div className="content">
           <div className="container">
+            {query ? (
+              <section className="sow-service-live-results">
+                <div className="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+                  <div>
+                    <p className="sow-section-eyebrow mb-2">Live Search</p>
+                    <h3 className="mb-2">Search results for "{query}"</h3>
+                    <p className="text-muted mb-0">
+                      {liveSearchResults?.error
+                        ? liveSearchResults.error
+                        : `Showing live catalog matches for ${liveSearchResults?.citySlug ?? "your selected city"}.`}
+                    </p>
+                  </div>
+                  <span className="sow-service-offer-section__count">
+                    {liveSearchResults?.total ?? 0} matches
+                  </span>
+                </div>
+
+                {liveSearchResults?.items.length ? (
+                  <div className="row g-3">
+                    {liveSearchResults.items.map((item) => (
+                      <div key={item.id} className="col-lg-4 col-md-6">
+                        <Link
+                          href={item.href}
+                          className="sow-service-live-card"
+                        >
+                          <span className="sow-service-live-card__badge">
+                            {item.type === "subservice"
+                              ? item.categoryName
+                              : "Category"}
+                          </span>
+                          <h5>{item.title}</h5>
+                          <p>{item.subtitle}</p>
+                          <span className="sow-service-live-card__meta">
+                            {item.type === "subservice"
+                              ? "Open service details"
+                              : "Browse category"}
+                          </span>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="sow-service-live-results__empty">
+                    <p className="mb-0">
+                      No live matches were found for that query yet. You can
+                      still browse the service categories below.
+                    </p>
+                  </div>
+                )}
+              </section>
+            ) : null}
+
             <section className="sow-service-directory">
               <div className="text-center mb-4">
                 <p className="sow-section-eyebrow mb-2">Category Directory</p>

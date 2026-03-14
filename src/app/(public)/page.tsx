@@ -5,11 +5,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import HeroServiceSearch from "@/components/HeroServiceSearch";
 import HeroTyped from "@/components/HeroTyped";
 import FeaturedServicesSlider from "@/components/Sliders/FeaturedServicesSlider";
 import TestimonialsSlider from "@/components/Sliders/TestimonialsSlider";
 import {
   featuredServices,
+  heroPopularSearches,
   heroTypedWords,
   homeCategories,
   popularServiceTabs,
@@ -55,67 +57,7 @@ export default function HomePage() {
                     We can connect you to the right service, first time and
                     every time.
                   </p>
-                  <div className="banner-form bg-white border mb-3">
-                    <form action="#">
-                      <div className="d-md-flex align-items-center">
-                        <div className="input-group mb-2">
-                          <span className="input-group-text px-1">
-                            <i className="ti ti-search" />
-                          </span>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Search for Service"
-                          />
-                        </div>
-                        <div className="input-group mb-2">
-                          <span className="input-group-text px-1">
-                            <i className="ti ti-map-pin" />
-                          </span>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Enter Location"
-                          />
-                        </div>
-                        <div className="mb-2">
-                          <Link
-                            href="/services"
-                            className="btn btn-linear-primary d-inline-flex align-items-center w-100"
-                          >
-                            <i className="ti ti-search me-2" />
-                            Search
-                          </Link>
-                        </div>
-                      </div>
-                    </form>
-                    <img
-                      src="/assets/img/bg/bg-06.svg"
-                      alt="img"
-                      className="shape-06 round-animate"
-                    />
-                  </div>
-                  <div className="d-flex align-items-center flex-wrap sow-hero-badges">
-                    <h6 className="mb-2 me-2 fw-medium">Popular Searches</h6>
-                    <Link
-                      href="/services"
-                      className="badge badge-dark-transparent fs-14 fw-normal mb-2 me-2"
-                    >
-                      Plumber
-                    </Link>
-                    <Link
-                      href="/services"
-                      className="badge badge-dark-transparent fs-14 fw-normal mb-2 me-2"
-                    >
-                      Interior
-                    </Link>
-                    <Link
-                      href="/services"
-                      className="badge badge-dark-transparent fs-14 fw-normal mb-2 me-2"
-                    >
-                      Nail Technicians
-                    </Link>
-                  </div>
+                  <HeroServiceSearch popularSearches={heroPopularSearches} />
                   <div className="d-flex align-items-center flex-wrap banner-info">
                     <div className="d-flex align-items-center me-4 mt-4">
                       <img src="/assets/img/icons/success-01.svg" alt="icon" />
